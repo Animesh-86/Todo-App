@@ -1,6 +1,8 @@
 package com.example.springboot.myfirstwebapp.todo;
 
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -30,27 +32,18 @@ public class TodoController {
     // /list-todos
     @RequestMapping("list-todos")
     public String listAllTodos(ModelMap model){
-        List<Todo> todos = todoService.findByUsername("Animesh");
+        String username = getLoggedInUsername(model);
+        List<Todo> todos = todoService.findByUsername(username);
         model.addAttribute("todos", todos);
         return "listTodos";   // file name of jsp
     }
 
-//    @RequestMapping(value="add-todo", method = RequestMethod.GET)
-//    public String showTodoPage(){
-//        //List<Todo> todos = todoService.findByUsername("Animesh");
-//        //model.addAttribute("todos", todos);
-//        return "Todo";   // file name of jsp
-//    }
-//
-//    @RequestMapping(value="add-todo", method = RequestMethod.POST)
-//    public String addNewPage(@RequestParam String description, ModelMap model){
-//        String username = (String)model.get("name");
-//        todoService.addTodo(username, description, LocalDate.now().plusYears(1), false);
-//
-//        //List<Todo> todos = todoService.findByUsername("Animesh");
-//        //model.addAttribute("todos", todos);
-//        return "redirect:list-todos";   // file name of jsp
-//    }
+    private static String getLoggedInUsername(ModelMap model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+
     //GET, POST
     @RequestMapping(value="add-todo", method = RequestMethod.GET)
     public String showNewTodoPage(ModelMap model) {
@@ -96,3 +89,21 @@ public class TodoController {
         return "redirect:list-todos";
     }
 }
+
+
+//    @RequestMapping(value="add-todo", method = RequestMethod.GET)
+//    public String showTodoPage(){
+//        //List<Todo> todos = todoService.findByUsername("Animesh");
+//        //model.addAttribute("todos", todos);
+//        return "Todo";   // file name of jsp
+//    }
+//
+//    @RequestMapping(value="add-todo", method = RequestMethod.POST)
+//    public String addNewPage(@RequestParam String description, ModelMap model){
+//        String username = (String)model.get("name");
+//        todoService.addTodo(username, description, LocalDate.now().plusYears(1), false);
+//
+//        //List<Todo> todos = todoService.findByUsername("Animesh");
+//        //model.addAttribute("todos", todos);
+//        return "redirect:list-todos";   // file name of jsp
+//    }
