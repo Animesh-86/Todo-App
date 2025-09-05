@@ -2,13 +2,20 @@ package com.example.springboot.myfirstwebapp.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.function.Function;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration //Marks this class as a Spring configuration class → Spring will scan it and register the beans you define here.
 public class SpringSecurityConfiguration {
@@ -36,10 +43,25 @@ public InMemoryUserDetailsManager createDetailsManager() {  // Creates an in-mem
         return userDetails;
     }
 
+    //All URLs are protected and require authentication.
+    //A login form is shown to the user if they try to access a protected URL.
+    // disable CSRF and allow frames for h2 console
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
         //BCrypt is a hashing algorithm (one-way). Even if someone steals the DB, they won’t see plain passwords.
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+        http.authorizeHttpRequests(
+          auth -> auth.anyRequest().authenticated()
+        );
+        http.formLogin(Customizer.withDefaults());
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+        return http.build();
     }
 }
 

@@ -1,9 +1,30 @@
 package com.example.springboot.myfirstwebapp.todo;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
+@Entity
 public class Todo {
+
+    public Todo() {
+        // JPA requires a default constructor
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // let DB generate id
+    private int id;
+
+    private String username;
+
+    @Size(min = 10, message = "Description should be at least 10 characters long")
+    private String description;
+
+    private LocalDate targetDate;
+    private boolean done;
+
+    // ✅ Constructor WITH id (for testing/debugging)
     public Todo(int id, String username, String description, LocalDate targetDate, boolean done) {
         this.id = id;
         this.username = username;
@@ -12,47 +33,29 @@ public class Todo {
         this.done = done;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
+    // ✅ Constructor WITHOUT id (for creating new todos)
+    public Todo(String username, String description, LocalDate targetDate, boolean done) {
         this.username = username;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LocalDate getTargetDate() {
-        return targetDate;
-    }
-
-    public void setTargetDate(LocalDate targetDate) {
         this.targetDate = targetDate;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
         this.done = done;
     }
 
-    private int id;
+    // Getters & Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public LocalDate getTargetDate() { return targetDate; }
+    public void setTargetDate(LocalDate targetDate) { this.targetDate = targetDate; }
+
+    public boolean isDone() { return done; }
+    public void setDone(boolean done) { this.done = done; }
 
     @Override
     public String toString() {
@@ -64,12 +67,4 @@ public class Todo {
                 ", done=" + done +
                 '}';
     }
-
-    private String username;
-
-    @Size(min=5, message="Description should be at least 10 characters long") // validator
-    private String description;
-    private LocalDate targetDate;
-    private boolean done;
-
 }
