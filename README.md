@@ -11,7 +11,7 @@ A simple Spring Boot web application that demonstrates a classic MVC stack with 
 - Database schema/data bootstrap using application configuration and SQL seed scripts
 
 ## Tech Stack
-- Java 24 (JDK 24)
+- Java 17 (JDK 17)
 - Spring Boot
 - Spring MVC
 - Spring Security
